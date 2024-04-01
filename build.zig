@@ -1,11 +1,11 @@
-const Builder = std.build.Builder;
+const Builder = std.Build;
 const std = @import("std");
 pub fn build(b: *Builder) void {
     const native_opt = b.option(bool, "native", "if other people exist, turn this off");
     const option_libc = (b.option(bool, "libc", "build with libc?")) orelse false;
     const is_native = native_opt orelse true;
 
-    var target: std.zig.CrossTarget = undefined;
+    var target: std.Build.ResolvedTarget = undefined;
     if (is_native) {
         target = b.standardTargetOptions(.{});
     } else {
@@ -39,7 +39,7 @@ pub fn build(b: *Builder) void {
     if (option_libc) exe.linkLibC();
     b.installArtifact(exe_tinyhost);
 
-    _ = b.addModule("zigdig", .{ .source_file = .{ .path = "src/main.zig" } });
+    _ = b.addModule("zigdig", .{ .root_source_file = .{ .path = "src/main.zig" } });
     var lib_tests = b.addTest(.{
         .root_source_file = .{ .path = "src/main.zig" },
         .optimize = optimize,
@@ -55,6 +55,6 @@ pub fn build(b: *Builder) void {
     run_step.dependOn(&run_cmd.step);
 
     _ = b.addModule("dns", .{
-        .source_file = .{ .path = "src/lib.zig" },
+        .root_source_file = .{ .path = "src/lib.zig" },
     });
 }

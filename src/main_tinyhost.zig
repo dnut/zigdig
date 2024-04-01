@@ -2,9 +2,9 @@ const std = @import("std");
 const dns = @import("lib.zig");
 
 const logger = std.log.scoped(.zigdig_main);
-pub const std_options = struct {
-    pub const log_level = .debug;
-    pub const logFn = logfn;
+pub const std_options: std.Options = .{
+    .log_level = .debug,
+    .logFn = logfn,
 };
 
 pub var current_log_level: std.log.Level = .info;
@@ -21,7 +21,7 @@ fn logfn(
 }
 
 pub fn main() !void {
-    if (std.mem.eql(u8, std.os.getenv("DEBUG") orelse "", "1")) current_log_level = .debug;
+    if (std.mem.eql(u8, std.posix.getenv("DEBUG") orelse "", "1")) current_log_level = .debug;
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer {
         _ = gpa.deinit();
